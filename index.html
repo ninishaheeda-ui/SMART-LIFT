@@ -15,10 +15,6 @@ h1 {
     margin-top: 40px;
 }
 
-h2 {
-    margin-top: 20px;
-}
-
 button {
     display: block;
     width: 80%;
@@ -35,6 +31,11 @@ button {
 .hidden {
     display: none;
 }
+
+.msg {
+    color: red;
+    margin-top: 10px;
+}
 </style>
 </head>
 
@@ -42,8 +43,14 @@ button {
 
 <h1>Lift KKTM Kemaman</h1>
 
+<!-- ACCESS DENIED -->
+<div id="denied" class="hidden">
+    <h2>Access Denied ❌</h2>
+    <p>Scan NFC again</p>
+</div>
+
 <!-- PAGE 1 -->
-<div id="page1">
+<div id="page1" class="hidden">
     <h2>Select Your Current Floor</h2>
     <button onclick="setCurrent(1)">Floor 1</button>
     <button onclick="setCurrent(2)">Floor 2</button>
@@ -54,13 +61,15 @@ button {
 <!-- PAGE 2 -->
 <div id="page2" class="hidden">
     <h2>Select Destination Floor</h2>
+    <div id="msg" class="msg"></div>
+
     <button onclick="sendData(1)">Floor 1</button>
     <button onclick="sendData(2)">Floor 2</button>
     <button onclick="sendData(3)">Floor 3</button>
     <button onclick="sendData(4)">Floor 4</button>
 </div>
 
-<!-- RESULT PAGE -->
+<!-- RESULT -->
 <div id="result" class="hidden">
     <h2>Your lift will arrive shortly 🚀</h2>
     <p>Please wait...</p>
@@ -69,8 +78,23 @@ button {
 <script>
 
 let currentFloor = null;
+let allowed = false;
 
-// pilih current floor
+// 🔐 CHECK NFC ACCESS
+const params = new URLSearchParams(window.location.search);
+
+if(params.get("access") === "1"){
+    allowed = true;
+}
+
+// SHOW PAGE BASED ON ACCESS
+if(allowed){
+    document.getElementById("page1").classList.remove("hidden");
+}else{
+    document.getElementById("denied").classList.remove("hidden");
+}
+
+// SELECT CURRENT FLOOR
 function setCurrent(floor){
     currentFloor = floor;
 
@@ -78,14 +102,22 @@ function setCurrent(floor){
     document.getElementById("page2").classList.remove("hidden");
 }
 
-// hantar data ke Firebase
+// SEND DATA
 function sendData(destination){
 
+    // belum pilih current
     if(currentFloor == null){
-        alert("Please select current floor first!");
+        document.getElementById("msg").innerText = "Please select current floor first!";
         return;
     }
 
+    // floor sama
+    if(currentFloor == destination){
+        document.getElementById("msg").innerText = "You are already on this floor!";
+        return;
+    }
+
+    // hantar ke Firebase
     fetch("https://smart-lift-using-nfc-default-rtdb.asia-southeast1.firebasedatabase.app/Lift.json", {
         method: "PUT",
         body: JSON.stringify({
@@ -96,16 +128,15 @@ function sendData(destination){
     })
     .then(() => {
 
-        // hide semua page
-        document.getElementById("page1").classList.add("hidden");
-        document.getElementById("page2").classList.add("hidden");
+        // lock system
+        allowed = false;
 
-        // show result
+        document.getElementById("page2").classList.add("hidden");
         document.getElementById("result").classList.remove("hidden");
 
     })
     .catch(() => {
-        alert("Error sending data!");
+        document.getElementById("msg").innerText = "Error sending data!";
     });
 }
 
