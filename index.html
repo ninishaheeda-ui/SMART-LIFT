@@ -9,7 +9,6 @@ body {
     font-family: Arial;
     text-align: center;
     background: #f4f4f4;
-    margin: 0;
 }
 
 .container {
@@ -29,8 +28,8 @@ button {
     color: white;
 }
 
-button:hover {
-    background: #45a049;
+button:disabled {
+    background: grey;
 }
 
 .hidden {
@@ -72,6 +71,11 @@ button:hover {
 
 let currentFloor = 0;
 
+// check kalau dah pernah guna
+if(localStorage.getItem("used") === "true"){
+    document.body.innerHTML = "<h2>Access Denied ❌<br>Scan NFC again</h2>";
+}
+
 // pilih current floor
 function selectCurrent(floor){
     currentFloor = floor;
@@ -90,8 +94,16 @@ function go(destination){
 
     alert("From Floor " + currentFloor + " → Go to Floor " + destination);
 
-    // 🔥 SAMBUNG ESP32 SINI
-    // contoh:
+    // LOCK SYSTEM 🔒
+    localStorage.setItem("used", "true");
+
+    // disable semua button
+    let buttons = document.querySelectorAll("button");
+    buttons.forEach(btn => btn.disabled = true);
+
+    document.body.innerHTML = "<h2>Lift Requested ✅<br>Scan NFC to use again</h2>";
+
+    // 🔥 ESP32 CALL
     // location.href = "http://192.168.4.1/go?from=" + currentFloor + "&to=" + destination;
 
 }
