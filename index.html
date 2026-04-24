@@ -1,116 +1,15 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lift KKTM Kemaman</title>
-
-<style>
-body {
-    font-family: Arial;
-    text-align: center;
-    background: #f4f4f4;
-}
-
-.container {
-    max-width: 400px;
-    margin: auto;
-    padding: 20px;
-}
-
-button {
-    width: 100%;
-    padding: 20px;
-    margin: 10px 0;
-    font-size: 18px;
-    border: none;
-    border-radius: 10px;
-    background: #4CAF50;
-    color: white;
-}
-
-button:disabled {
-    background: grey;
-}
-
-.hidden {
-    display: none;
-}
-</style>
-
-</head>
-
-<body>
-
-<div class="container">
-
-    <h1>Lift KKTM Kemaman</h1>
-
-    <!-- PAGE 1 -->
-    <div id="page1">
-        <h3>Select Your Current Floor</h3>
-
-        <button onclick="selectCurrent(1)">Floor 1</button>
-        <button onclick="selectCurrent(2)">Floor 2</button>
-        <button onclick="selectCurrent(3)">Floor 3</button>
-        <button onclick="selectCurrent(4)">Floor 4</button>
-    </div>
-
-    <!-- PAGE 2 -->
-    <div id="page2" class="hidden">
-        <h3>Select Destination Floor</h3>
-
-        <button onclick="go(1)">Floor 1</button>
-        <button onclick="go(2)">Floor 2</button>
-        <button onclick="go(3)">Floor 3</button>
-        <button onclick="go(4)">Floor 4</button>
-    </div>
-
-    <!-- PAGE 3 (RESULT) -->
-    <div id="page3" class="hidden">
-        <h2>Your lift will arrive shortly 🚀</h2>
-        <p>Please wait...</p>
-    </div>
-
-</div>
-
 <script>
+function sendData(from, to){
 
-let currentFloor = 0;
+    fetch("https://smart-lift-using-nfc-default-rtdb.asia-southeast1.firebasedatabase.app/lift.json", {
+        method: "PUT",
+        body: JSON.stringify({
+            from: from,
+            to: to,
+            time: Date.now()
+        })
+    });
 
-// lock kalau dah guna
-if(localStorage.getItem("used") === "true"){
-    document.body.innerHTML = "<h2>Access Denied ❌<br>Scan NFC again</h2>";
+    document.body.innerHTML = "<h2>Your lift will arrive shortly 🚀</h2>";
 }
-
-// pilih current
-function selectCurrent(floor){
-    currentFloor = floor;
-
-    document.getElementById("page1").classList.add("hidden");
-    document.getElementById("page2").classList.remove("hidden");
-}
-
-// pilih destination
-function go(destination){
-
-    if(destination === currentFloor){
-        alert("You are already on this floor!");
-        return;
-    }
-
-    // lock system
-    localStorage.setItem("used", "true");
-
-    // tukar ke page 3
-    document.getElementById("page2").classList.add("hidden");
-    document.getElementById("page3").classList.remove("hidden");
-
-    // 🔥 ESP32 (nanti)
-    // fetch("http://192.168.4.1/go?from=" + currentFloor + "&to=" + destination);
-
-}
-
 </script>
-
-</body>
-</html>
