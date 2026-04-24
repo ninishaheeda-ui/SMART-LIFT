@@ -1,15 +1,115 @@
-<script>
-function sendData(from, to){
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lift KKTM Kemaman</title>
 
-    fetch("https://smart-lift-using-nfc-default-rtdb.asia-southeast1.firebasedatabase.app/lift.json", {
+<style>
+body {
+    font-family: Arial;
+    text-align: center;
+    background: #f2f2f2;
+}
+
+h1 {
+    margin-top: 40px;
+}
+
+h2 {
+    margin-top: 20px;
+}
+
+button {
+    display: block;
+    width: 80%;
+    max-width: 300px;
+    margin: 12px auto;
+    padding: 15px;
+    font-size: 18px;
+    border-radius: 10px;
+    border: none;
+    background: green;
+    color: white;
+}
+
+.hidden {
+    display: none;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Lift KKTM Kemaman</h1>
+
+<!-- PAGE 1 -->
+<div id="page1">
+    <h2>Select Your Current Floor</h2>
+    <button onclick="setCurrent(1)">Floor 1</button>
+    <button onclick="setCurrent(2)">Floor 2</button>
+    <button onclick="setCurrent(3)">Floor 3</button>
+    <button onclick="setCurrent(4)">Floor 4</button>
+</div>
+
+<!-- PAGE 2 -->
+<div id="page2" class="hidden">
+    <h2>Select Destination Floor</h2>
+    <button onclick="sendData(1)">Floor 1</button>
+    <button onclick="sendData(2)">Floor 2</button>
+    <button onclick="sendData(3)">Floor 3</button>
+    <button onclick="sendData(4)">Floor 4</button>
+</div>
+
+<!-- RESULT PAGE -->
+<div id="result" class="hidden">
+    <h2>Your lift will arrive shortly 🚀</h2>
+    <p>Please wait...</p>
+</div>
+
+<script>
+
+let currentFloor = null;
+
+// pilih current floor
+function setCurrent(floor){
+    currentFloor = floor;
+
+    document.getElementById("page1").classList.add("hidden");
+    document.getElementById("page2").classList.remove("hidden");
+}
+
+// hantar data ke Firebase
+function sendData(destination){
+
+    if(currentFloor == null){
+        alert("Please select current floor first!");
+        return;
+    }
+
+    fetch("https://smart-lift-using-nfc-default-rtdb.asia-southeast1.firebasedatabase.app/Lift.json", {
         method: "PUT",
         body: JSON.stringify({
-            from: from,
-            to: to,
+            from: currentFloor,
+            to: destination,
             time: Date.now()
         })
-    });
+    })
+    .then(() => {
 
-    document.body.innerHTML = "<h2>Your lift will arrive shortly 🚀</h2>";
+        // hide semua page
+        document.getElementById("page1").classList.add("hidden");
+        document.getElementById("page2").classList.add("hidden");
+
+        // show result
+        document.getElementById("result").classList.remove("hidden");
+
+    })
+    .catch(() => {
+        alert("Error sending data!");
+    });
 }
+
 </script>
+
+</body>
+</html>
