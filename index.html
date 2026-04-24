@@ -65,18 +65,24 @@ button:disabled {
         <button onclick="go(4)">Floor 4</button>
     </div>
 
+    <!-- PAGE 3 (RESULT) -->
+    <div id="page3" class="hidden">
+        <h2>Your lift will arrive shortly 🚀</h2>
+        <p>Please wait...</p>
+    </div>
+
 </div>
 
 <script>
 
 let currentFloor = 0;
 
-// check kalau dah pernah guna
+// lock kalau dah guna
 if(localStorage.getItem("used") === "true"){
     document.body.innerHTML = "<h2>Access Denied ❌<br>Scan NFC again</h2>";
 }
 
-// pilih current floor
+// pilih current
 function selectCurrent(floor){
     currentFloor = floor;
 
@@ -92,19 +98,15 @@ function go(destination){
         return;
     }
 
-    alert("From Floor " + currentFloor + " → Go to Floor " + destination);
-
-    // LOCK SYSTEM 🔒
+    // lock system
     localStorage.setItem("used", "true");
 
-    // disable semua button
-    let buttons = document.querySelectorAll("button");
-    buttons.forEach(btn => btn.disabled = true);
+    // tukar ke page 3
+    document.getElementById("page2").classList.add("hidden");
+    document.getElementById("page3").classList.remove("hidden");
 
-    document.body.innerHTML = "<h2>Lift Requested ✅<br>Scan NFC to use again</h2>";
-
-    // 🔥 ESP32 CALL
-    // location.href = "http://192.168.4.1/go?from=" + currentFloor + "&to=" + destination;
+    // 🔥 ESP32 (nanti)
+    // fetch("http://192.168.4.1/go?from=" + currentFloor + "&to=" + destination);
 
 }
 
