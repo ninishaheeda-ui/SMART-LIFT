@@ -29,6 +29,10 @@ button {
     color: white;
 }
 
+button:hover {
+    background: #45a049;
+}
+
 .hidden {
     display: none;
 }
@@ -42,43 +46,56 @@ button {
 
     <h1>Lift KKTM Kemaman</h1>
 
-    <!-- STEP 1 -->
-    <div id="step1">
-        <h2>Select Your Current Floor</h2>
-        <button onclick="setCurrent(1)">Floor 1</button>
-        <button onclick="setCurrent(2)">Floor 2</button>
-        <button onclick="setCurrent(3)">Floor 3</button>
-        <button onclick="setCurrent(4)">Floor 4</button>
+    <!-- PAGE 1 -->
+    <div id="page1">
+        <h3>Select Your Current Floor</h3>
+
+        <button onclick="selectCurrent(1)">Floor 1</button>
+        <button onclick="selectCurrent(2)">Floor 2</button>
+        <button onclick="selectCurrent(3)">Floor 3</button>
+        <button onclick="selectCurrent(4)">Floor 4</button>
     </div>
 
-    <!-- STEP 2 -->
-    <div id="step2" class="hidden">
-        <h2>Select Destination Floor</h2>
-        <button onclick="send(1)">Floor 1</button>
-        <button onclick="send(2)">Floor 2</button>
-        <button onclick="send(3)">Floor 3</button>
-        <button onclick="send(4)">Floor 4</button>
+    <!-- PAGE 2 -->
+    <div id="page2" class="hidden">
+        <h3>Select Destination Floor</h3>
+
+        <button onclick="go(1)">Floor 1</button>
+        <button onclick="go(2)">Floor 2</button>
+        <button onclick="go(3)">Floor 3</button>
+        <button onclick="go(4)">Floor 4</button>
     </div>
 
 </div>
 
 <script>
+
 let currentFloor = 0;
 
-function setCurrent(floor){
+// pilih current floor
+function selectCurrent(floor){
     currentFloor = floor;
 
-    document.getElementById("step1").classList.add("hidden");
-    document.getElementById("step2").classList.remove("hidden");
+    document.getElementById("page1").classList.add("hidden");
+    document.getElementById("page2").classList.remove("hidden");
 }
 
-function send(destination){
+// pilih destination
+function go(destination){
+
+    if(destination === currentFloor){
+        alert("You are already on this floor!");
+        return;
+    }
+
     alert("From Floor " + currentFloor + " → Go to Floor " + destination);
 
-    // nanti boleh connect ESP32 sini
+    // 🔥 SAMBUNG ESP32 SINI
     // contoh:
-    // fetch("http://192.168.4.1/go?from=" + currentFloor + "&to=" + destination);
+    // location.href = "http://192.168.4.1/go?from=" + currentFloor + "&to=" + destination;
+
 }
+
 </script>
 
 </body>
